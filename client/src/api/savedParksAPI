@@ -1,0 +1,36 @@
+const BASE = "";
+
+function authHeaders() {
+  const t = localStorage.getItem("authToken");
+  return t ? { Authorization: `Bearer ${t}` } : {};
+}
+
+async function check(res) {
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { const j = await res.json(); if (j.message) msg = j.message; } catch {}
+    throw new Error(msg);
+  }
+  return res;
+}
+
+export async function listSavedParks() {
+  const r = await check(await fetch(`${BASE}/api/savedParks`, { headers: authHeaders() }));
+  const j = await r.json();
+  return j.data || [];
+}
+
+export async function savePark(key, park) {
+  await check(await fetch(`${BASE}/api/savedParks`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ key, park })
+  }));
+}
+
+export async function unsavePark(key) {
+  await check(await fetch(`${BASE}/api/savedParks/${encodeURIComponent(key)}`, {
+    method: "DELETE",
+    headers: authHeaders()
+  }));
+}

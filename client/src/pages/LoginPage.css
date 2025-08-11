@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;700&display=swap');
+
+.login-page {
+  width: 100vw; /* Use viewport width instead of 100% */
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center;
+  justify-content: center;
+  background-image: url("../assets/App_Logo.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+  position: fixed; /* Fix position to cover entire viewport */
+  top: 0;
+  left: 0;
+}
+
+/* Optional: Add a semi-transparent overlay for better text readability */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3); /* Dark overlay */
+  z-index: 1;
+}
+
+/* Title styling - direct child of login-page */
+.login-page h1 {
+  position: relative;
+  z-index: 2;
+  color: rgb(255, 255, 255);
+  font-family: 'Roboto Slab', serif;
+  font-size: 2.5rem;
+  font-weight: 700; /* Bold */
+  margin-bottom: 20px; /* 20px padding at bottom */
+  margin-top: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+/* Ensure the login component appears above the overlay */
+.login-page > * {
+  position: relative;
+  z-index: 2;
+}
+

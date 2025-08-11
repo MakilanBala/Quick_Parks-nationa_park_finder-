@@ -46,45 +46,45 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-
-    // Validate user input
-    if (!email || !password) {
-        return res.status(400).json({ message: "All fields are required" });
+  const { email, password } = req.body || {};
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password required" });
+  }
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    try {
-        // Find user by email
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Check password
-        const isMatch = await bcrypt.compare(password, user.passwordHash);
-        if (!isMatch) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-
-        // Create JWT token
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: TOKEN_EXPIRES_IN });
-        res.json({ token, user: { email: user.email, username: user.username } });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error" });
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
+    if (!JWT_SECRET) {
+      console.error("[login] JWT_SECRET missing");
+      return res.status(500).json({ message: "Server misconfiguration" });
+    }
+
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: TOKEN_EXPIRES_IN });
+    res.json({ token, user: { email: user.email, username: user.username } });
+  } catch (err) {
+    console.error("[login] error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization || "";
-  const token = authHeader.split(" ")[1]; // Expect: "Bearer <token>"
+  const token = authHeader.split(" ")[1];
   if (!token) return res.status(401).json({ message: "Missing token" });
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET); // verify signature & expiration
-    req.userId = payload.id; // ✅ Changed from payload.userId to payload.id
-    next(); // allow request to proceed
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.userId = payload.id;
+    // Debug
+    console.log(`[auth] ${req.method} ${req.path} userId=${req.userId} token=${String(token).slice(0,12)}...`);
+    next();
   } catch {
     res.status(401).json({ message: "Invalid token" });
   }

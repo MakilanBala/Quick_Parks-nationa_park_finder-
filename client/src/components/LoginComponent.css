@@ -1,0 +1,91 @@
+.login-component {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-component h2 {
+  color: #28a745; /* Green color */
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 20px; /* Padding between rows */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #28a745; /* Green focus border */
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background: #28a745; /* Green background */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #218838; /* Darker green on hover */
+}
+
+.submit-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.toggle-button {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #28a745; /* Green text */
+  border: 2px solid #28a745;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-button:hover {
+  background: #28a745;
+  color: white;
+}

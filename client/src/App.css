@@ -5,6 +5,14 @@
   text-align: center;
 }
 
+/* src/styles/globals.css */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+
 .logo {
   height: 6em;
   padding: 1.5em;

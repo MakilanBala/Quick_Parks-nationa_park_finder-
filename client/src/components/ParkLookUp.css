@@ -1,0 +1,59 @@
+/* Make the wrapper fill the viewport and center its contents */
+.park-lookup-wrapper {
+  display: block;
+  min-height: calc(100vh - 50px);           /* Full viewport height */
+  min-width: calc(100vw);            /* Full viewport width */
+  margin-top: 100px;
+  padding: 1rem;                /* Reduced padding for more space */
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The card itself - takes up most of the page */
+.park-lookup-card {
+  background: #ffffff;
+  color: black;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 95%;                   /* Use 95% of available width */
+  max-width: 1200px;            /* Increased max-width significantly */
+  min-height: 70vh;             /* Take up 70% of viewport height */
+  margin: 0 auto;
+  display: inline-block;
+  text-align: left;
+}
+
+/* Center the actions row */
+.park-lookup-card .actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* Optional: tweak button size */
+.park-lookup-card .submitButton {
+  padding: 0.9rem 1.4rem;
+  font-weight: 600;
+}
+
+/* Optional: Style the form elements inside */
+.park-lookup-card h2 {
+  margin-bottom: 2rem;
+  color: #333;
+  font-size: 2.5rem;            /* Larger heading for bigger card */
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+/* Error banner style */
+.park-lookup-card .error-banner {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+

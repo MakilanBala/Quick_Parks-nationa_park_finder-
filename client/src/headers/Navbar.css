@@ -1,0 +1,60 @@
+.navbar {
+  position: fixed;       /* sticks to top */
+  top: 0;
+  left: 0;
+  right: 0;              /* stretch from left to right */
+  display: flex;
+  justify-content: space-between; /* space between brand and links */
+  align-items: center;
+  padding: .5rem 1rem;
+  background: #024117;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+  z-index: 1000;
+  color: white; /* Add this for white text */
+}
+
+/* Group brand and links together on the left */
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Space between brand and links */
+}
+
+.navbar__brand {
+  font-weight: bold;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+}
+
+.navbar__links a {
+  margin: 0 0.75rem;
+  text-decoration: none;
+  color: white; /* White text for links */
+}
+
+.navbar__links a:hover {
+  text-decoration: underline;
+}
+
+.navbar__user {
+  margin-right: 1rem;
+  color: white;
+}
+
+.navbar__logout {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 1px solid white; /* White border */
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.navbar__logout:hover {
+  background: white;
+  color: #024117;
+}

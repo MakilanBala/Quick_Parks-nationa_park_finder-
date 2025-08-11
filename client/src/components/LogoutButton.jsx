@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
-export default function WelcomePage() {
+export default function LogoutButton() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -11,13 +11,12 @@ export default function WelcomePage() {
     navigate("/login");
   };
 
-  if (!user) return <div>Loading user...</div>;
+  if (!user) return null;
 
   return (
-    <div>
-      <h1>Welcome, {user.username || user.email}!</h1> {/* ✅ Only use username */}
-      <p>Email: {user.email}</p>
-      <button onClick={handleLogout}>Log out</button>
-    </div>
+    <button onClick={handleLogout}>Log out</button>
   );
 }
+
+
+  

@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const { router: authRouter } = require("./routes/auth"); 
 const userRouter = require("./routes/user");
+const savedParksRouter = require("./routes/savedParks");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/savedParks", savedParksRouter);
 
 mongoose
   .connect(process.env.MONGO_URI) 
