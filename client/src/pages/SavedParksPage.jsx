@@ -20,7 +20,7 @@ async function fetchParkDetailsByCodes(codes) {
 }
 
 export default function SavedParksPage() {
-  const { savedCodes, hasToken, loading: savedLoading } = useSavedParks();
+  const { savedCodes, hasToken, loading: savedLoading, isSaved, toggleSave } = useSavedParks();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [parks, setParks] = React.useState([]);
@@ -55,9 +55,22 @@ export default function SavedParksPage() {
       {!showLoading && hasToken && parks.length === 0 && <div>No saved parks yet.</div>}
       {!showLoading && parks.length > 0 && (
         <div className="parks-grid">
-          {parks.map((p) => (
-            <ParkCard key={p.id || p.parkCode} park={p} />
-          ))}
+          {parks.map((p) => {
+            const code = (p.parkCode || "").trim().toLowerCase();
+            const canSave = hasToken && !!code;
+            return (
+              <ParkCard
+                key={p.id || code}
+                park={p}
+                isSaved={code ? isSaved(code) : false}
+                onToggleSave={
+                  canSave
+                    ? () => toggleSave(code, p.fullName || p.name || code.toUpperCase())
+                    : undefined
+                }
+              />
+            );
+          })}
         </div>
       )}
     </ParkLookUp>
