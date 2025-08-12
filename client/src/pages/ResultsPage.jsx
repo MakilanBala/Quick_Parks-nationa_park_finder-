@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import ParkLookUp from "../components/ParkLookUp";
 import ParkCard from "../components/ParkCard";
-import useSavedParks from "../hooks/useSavedParks"; // or ../hooks/userSavedParks
+import useSavedParks from "../hooks/useSavedParks";
 
 
 const API = "https://developer.nps.gov/api/v1";
@@ -348,15 +348,26 @@ export default function ResultsPage() {
             <div>No parks found, try adjusting your filters.</div>
           ) : (
             <div style={{ display: "grid", gap: 16 }}>
-              {parks.map(p => (
-                <ParkCard
-                  key={p.id || p.parkCode}
-                  park={p}
-                  distanceMiles={p._dist}
-                  isSaved={isSaved(p.parkCode)}
-                  onToggleSave={() => hasToken && toggleSave(p.parkCode, p.fullName)}
-                />
-              ))}
+              {parks.map(p => {
+                const code = (p.parkCode || "").trim().toLowerCase();
+                const canSave = hasToken && !!code;
+                return (
+                  <ParkCard
+                    key={p.id || code}
+                    park={p}
+                    distanceMiles={p._dist}
+                    isSaved={code ? isSaved(code) : false}
+                    onToggleSave={
+                      canSave
+                        ? () => {
+                            console.debug("[Save] click", { code, wasSaved: isSaved(code) });
+                            toggleSave(code, p.fullName);
+                          }
+                        : undefined
+                    }
+                  />
+                );
+              })}
             </div>
           )
         )}
