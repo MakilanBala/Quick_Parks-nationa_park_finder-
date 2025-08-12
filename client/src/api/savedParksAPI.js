@@ -1,7 +1,8 @@
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
+const TOKEN_KEY = "authToken";
 
 function authHeaders() {
-  const t = localStorage.getItem("authToken");
+  const t = localStorage.getItem(TOKEN_KEY);
   return t ? { Authorization: `Bearer ${t}` } : {};
 }
 

@@ -2,110 +2,82 @@ import React, { createContext, useState, useEffect, use } from "react";
 
 export const AuthContext = createContext();
 
-const TOKEN_KEY = "park_suggestor_token";
-const USER_KEY = "park_suggestor_user";
+const TOKEN_KEY = "authToken";
+const USER_KEY = "authUser";
 
 export function AuthProvider({ children }) {
-    const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
-    const [user, setUser] = useState(() => {
-        const raw = localStorage.getItem(USER_KEY);
-        return raw ? JSON.parse(raw) : null;
+  const [token, setToken] = React.useState(() => localStorage.getItem(TOKEN_KEY));
+  const [user, setUser] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem(USER_KEY) || "null"); } catch { return null; }
+  });
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  }, [token]);
+
+  React.useEffect(() => {
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+    else localStorage.removeItem(USER_KEY);
+  }, [user]);
+
+  const login = async ({ email, password }) => {
+    setError(null);
+    // Clear any stale token before login
+    localStorage.removeItem(TOKEN_KEY);
+
+    const res = await fetch("http://localhost:4000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      const msg = data?.message || "Login failed";
+      setError(msg);
+      throw new Error(msg);
+    }
 
-    useEffect(() => {
-        async function hydrate() {
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
-            try {
-                const res = await fetch("http://localhost:4000/api/user/me", {
-                headers: { Authorization: `Bearer ${token}` },
-                });
-                if (!res.ok) throw new Error("Session invalid");
-                const { user: u } = await res.json();
-                setUser(u);
-            } catch (e) {
-                console.warn("Auth hydrate failed:", e);
-                setToken(null);
-                setUser(null);
-                localStorage.removeItem(TOKEN_KEY);
-                localStorage.removeItem(USER_KEY);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        hydrate();
-    } , [token]);
+    const t = data?.token || data?.accessToken || data?.jwt;
+    if (!t) throw new Error("No token in response");
 
-    useEffect(() => {
-        if (token) localStorage.setItem(TOKEN_KEY, token);
-        else localStorage.removeItem(TOKEN_KEY);
-    }, [token]);
+    console.debug("[Auth] server token (prefix):", t.slice(0, 24));
+    setToken(t);
+    setUser(data.user || null);
+    window.dispatchEvent(new Event("auth:changed"));
+    return data.user;
+  };
 
-    useEffect(() => {
-        if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
-        else localStorage.removeItem(USER_KEY);
-    }, [user]);
+  const signup = async ({ email, password, username }) => {
+    setError(null);
+    const res = await fetch("http://localhost:4000/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, username }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      const msg = data?.message || "Signup failed";
+      setError(msg);
+      throw new Error(msg);
+    }
+    return data;
+  };
 
-    const login = async ({ email, password }) => {
-        setError(null);
-        const res = await fetch("http://localhost:4000/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
-        if (!res.ok) {
-            const { message } = await res.json();
-            setError(message || "Login failed");
-            throw new Error(message);
-        }
-        const { token: t, user: u } = await res.json();
-        setToken(t);
-        setUser(u);
-        return u;
-    };
+  const logout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    setToken(null);
+    setUser(null);
+    window.dispatchEvent(new Event("auth:changed"));
+  };
 
-    const signup = async ({ email, password, username }) => {
-        setError(null);
-        const res = await fetch("http://localhost:4000/api/auth/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password, username}), // ✅ Changed displayName to username
-        });
-        if (!res.ok) {
-            const { message } = await res.json();
-            setError(message || "Signup failed");
-            throw new Error(message);
-        }
-        const { token: t, user: u } = await res.json();
-        setToken(t);
-        setUser(u);
-        return u;
-    };
-
-    const logout = () => {
-        setToken(null);
-        setUser(null);
-    };
-
-    
-    return (
-        <AuthContext.Provider
-            value={{
-                token,
-                user,
-                isLoading,
-                error,
-                login,
-                signup,
-                logout,
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ token, user, isLoading, error, login, signup, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

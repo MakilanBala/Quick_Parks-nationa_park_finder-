@@ -18,14 +18,23 @@ export default function LoginComponent() {
     e.preventDefault();
     setLoading(true);
     try {
+      const fd = new FormData(e.currentTarget);
+      const emailVal = String(fd.get("email") || email || "").trim();
+      const passwordVal = String(fd.get("password") || password || "");
+      if (!emailVal || !passwordVal) throw new Error("Email and password required");
+
       if (isSignup) {
-        await signup({ email, password, username: displayName });
+        await signup({ email: emailVal, password: passwordVal, username: displayName });
       } else {
-        await login({ email, password });
+        // PASS AN OBJECT (matches AuthProvider.login signature)
+        await login({ email: emailVal, password: passwordVal });
       }
       navigate(from, { replace: true });
-    } catch {}
-    setLoading(false);
+    } catch (err) {
+      console.error("[LoginComponent] submit error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,28 +45,36 @@ export default function LoginComponent() {
         <div className="form-group">
           <label>Email</label>
           <input
+            name="email"
             type="email"
+            autoComplete="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onInput={(e) => setEmail(e.currentTarget.value)}
           />
         </div>
         {isSignup && (
           <div className="form-group">
             <label>Display Name</label>
             <input
+              name="displayName"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
+              onInput={(e) => setDisplayName(e.currentTarget.value)}
             />
           </div>
         )}
         <div className="form-group">
           <label>Password</label>
           <input
+            name="password"
             type="password"
+            autoComplete="current-password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onInput={(e) => setPassword(e.currentTarget.value)}
           />
         </div>
         <button className="submit-button" disabled={loading} type="submit">
