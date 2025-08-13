@@ -44,11 +44,15 @@ function haversineMiles(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 async function fetchParkDetailsByCodes(codes) {
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
   const all = [];
   for (let i = 0; i < codes.length; i += 40) {
     const chunk = codes.slice(i, i + 40);
-    const url = `${API}/parks?parkCode=${chunk.map(encodeURIComponent).join(",")}&fields=latLong,fullName,states,images,description,url&limit=500`;
-    const res = await fetch(url, { headers: { "X-Api-Key": KEY } });
+    const url =
+      `${API_BASE}/api/nps/parks?` +
+      `parkCode=${chunk.map(encodeURIComponent).join(",")}` + // encode each code, not the commas
+      `&fields=latLong,fullName,states,images,description,url&limit=500`;
+    const res = await fetch(url); // server adds X-Api-Key
     if (!res.ok) throw new Error(`Parks details error: ${res.status} ${res.statusText}`);
     const json = await res.json();
     all.push(...(json?.data || []));
@@ -56,21 +60,38 @@ async function fetchParkDetailsByCodes(codes) {
   return all;
 }
 
-// Fetch all pages from an NPS endpoint (uses total/start/limit)
-async function fetchAllPages(baseUrl, pageSize = 200, fetchOpts = {}) {
+// Fetch all pages via proxy (works for /activities, /topics and their /parks)
+async function fetchAllPages(baseUrl, pageSize = 200, _opts = {}) {
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
+
+  // Accept absolute NPS URLs or relative paths and convert to proxy path
+  const toProxyPath = (u) => {
+    try {
+      if (/^https?:\/\//i.test(u)) {
+        const parsed = new URL(u);
+        const path = parsed.pathname.replace(/^\/api\/v1/, "");
+        const qs = parsed.search ? parsed.search.slice(1) : "";
+        return `/api/nps${path}${qs ? `?${qs}` : ""}`;
+      }
+    } catch {}
+    return `/api/nps${u.startsWith("/") ? u : `/${u}`}`;
+  };
+
+  const basePath = toProxyPath(baseUrl);
+
   let start = 0;
   const rows = [];
   while (true) {
-    const sep = baseUrl.includes("?") ? "&" : "?";
-    const url = `${baseUrl}${sep}start=${start}&limit=${pageSize}`;
-    const res = await fetch(url, fetchOpts);
+    const sep = basePath.includes("?") ? "&" : "?";
+    const url = `${API_BASE}${basePath}${sep}start=${start}&limit=${pageSize}`;
+    const res = await fetch(url); // no key header on client
     if (!res.ok) throw new Error(`NPS paging error: ${res.status} ${res.statusText}`);
     const page = await res.json();
     const data = page?.data || [];
     rows.push(...data);
     const total = Number(page?.total ?? rows.length);
     start += pageSize;
-    if (data.length < pageSize || start >= total) break; // last page reached
+    if (data.length < pageSize || start >= total) break;
   }
   return rows;
 }

@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+// Use backend proxy base
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
+
 const NpsDataContext = createContext(null);
 
 export function NpsDataProvider({ children }) {
@@ -14,25 +17,33 @@ export function NpsDataProvider({ children }) {
   const [loading, setLoading] = useState(!(activities.length && topics.length));
   const [error, setError] = useState(null);
 
+  // Pager via proxy (handles activities/topics even if paginated)
+  async function fetchAllPagesProxy(path, pageSize = 200) {
+    let start = 0;
+    const all = [];
+    while (true) {
+      const sep = path.includes("?") ? "&" : "?";
+      const url = `${API_BASE}/api/nps${path}${sep}start=${start}&limit=${pageSize}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`NPS ${res.status} ${res.statusText}`);
+      const json = await res.json();
+      const data = json?.data || [];
+      all.push(...data);
+      const total = Number(json?.total ?? all.length);
+      start += pageSize;
+      if (data.length < pageSize || start >= total) break;
+    }
+    return all;
+  }
+
   useEffect(() => {
     if (activities.length && topics.length) return; // already cached
-    const apiKey = import.meta.env.VITE_NPS_API_KEY;
-    if (!apiKey) {
-      setError("Missing VITE_NPS_API_KEY");
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     Promise.all([
-      fetch(`https://developer.nps.gov/api/v1/activities?api_key=${apiKey}`),
-      fetch(`https://developer.nps.gov/api/v1/topics?api_key=${apiKey}`),
+      fetchAllPagesProxy("/activities"),
+      fetchAllPagesProxy("/topics"),
     ])
-      .then(async ([aRes, tRes]) => {
-        if (!aRes.ok || !tRes.ok) throw new Error("NPS fetch failed");
-        const aJson = await aRes.json();
-        const tJson = await tRes.json();
-        const acts = aJson?.data ?? [];
-        const tops = tJson?.data ?? [];
+      .then(([acts, tops]) => {
         setActivities(acts);
         setTopics(tops);
         sessionStorage.setItem("nps_activities", JSON.stringify(acts));

@@ -17,6 +17,27 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/savedParks", savedParksRouter);
 
+// NPS proxy (GET only)
+app.use("/api/nps", async (req, res) => {
+  try {
+    if (req.method !== "GET") return res.status(405).json({ message: "Method not allowed" });
+    const key = process.env.NPS_API_KEY;
+    if (!key) return res.status(500).json({ message: "NPS_API_KEY not configured" });
+
+    // Preserve the original query (don’t rebuild with URLSearchParams)
+    const upstreamUrl = `https://developer.nps.gov${req.originalUrl.replace(/^\/api\/nps/, "/api/v1")}`;
+    console.log("[nps proxy] ->", upstreamUrl);
+
+    const upstream = await fetch(upstreamUrl, { headers: { "X-Api-Key": key } });
+    const contentType = upstream.headers.get("content-type") || "application/json";
+    const body = await upstream.text();
+    res.status(upstream.status).set("Content-Type", contentType).send(body);
+  } catch (e) {
+    console.error("[nps proxy] error:", e?.message || e);
+    res.status(502).json({ message: "Upstream error" });
+  }
+});
+
 mongoose
   .connect(process.env.MONGO_URI) 
   .then(() => {
