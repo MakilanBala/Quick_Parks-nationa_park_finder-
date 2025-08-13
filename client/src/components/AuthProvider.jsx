@@ -1,3 +1,5 @@
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+
 import React, { createContext, useState, useEffect, use } from "react";
 
 export const AuthContext = createContext();
@@ -28,7 +30,7 @@ export function AuthProvider({ children }) {
     // Clear any stale token before login
     localStorage.removeItem(TOKEN_KEY);
 
-    const res = await fetch("http://localhost:4000/api/auth/login", {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -53,7 +55,7 @@ export function AuthProvider({ children }) {
 
   const signup = async ({ email, password, username }) => {
     setError(null);
-    const res = await fetch("http://localhost:4000/api/auth/signup", {
+    const res = await fetch(`${API_BASE}/api/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, username }),

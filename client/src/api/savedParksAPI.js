@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:4000";
+const API_BASE = import.meta.env.VITE_API_BASE || "";
 const TOKEN_KEY = "authToken";
 
 function authHeaders() {
@@ -17,7 +17,7 @@ async function check(res) {
 
 export async function listSavedParks() {
   const url = `${API_BASE}/api/savedParks`;
-  console.debug("[listSavedParks] URL:", url);
+  //console.debug("[listSavedParks] URL:", url);
   const r = await check(await fetch(url, { headers: authHeaders() }));
   const j = await r.json();
   const rows = j.data || [];
@@ -26,7 +26,7 @@ export async function listSavedParks() {
 
 export async function savePark(key, park) {
   const url = `${API_BASE}/api/savedParks`;
-  console.debug("[savePark] URL:", url);
+  //console.debug("[savePark] URL:", url);
   await check(await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
@@ -36,6 +36,6 @@ export async function savePark(key, park) {
 
 export async function unsavePark(key) {
   const url = `${API_BASE}/api/savedParks/${encodeURIComponent(key)}`;
-  console.debug("[unsavePark] URL:", url);
+  //console.debug("[unsavePark] URL:", url);
   await check(await fetch(url, { method: "DELETE", headers: authHeaders() }));
 }
