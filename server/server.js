@@ -1,5 +1,6 @@
 require("dotenv").config(); 
 
+const PORT = process.env.PORT || 4000; // Use PORT from .env or default to 4000
 const express = require("express"); 
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -38,11 +39,15 @@ app.use("/api/nps", async (req, res) => {
   }
 });
 
+// server/server.js
+console.log('NODE_ENV =', process.env.NODE_ENV); // 'development' | 'production' | 'test'
+
+
 mongoose
   .connect(process.env.MONGO_URI) 
   .then(() => {
     console.log("Mongo connected");
-    app.listen(4000, () => console.log("Server running on http://localhost:4000")); 
+    app.listen(PORT,"0.0.0.0" , () => console.log(`Server running on http://localhost:${PORT}`)); 
   })
   .catch(err => {
     console.error("DB connection failed", err); 
