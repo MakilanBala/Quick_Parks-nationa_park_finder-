@@ -29,8 +29,11 @@ This project is an application that allows users to find national parks of their
 * Mongo Altas account
 
 ### Installing
-1. Clone repo
-2. Install dependiencies on both client and server
+1. Create a free MongoDB cluster
+   * allow network access from anywhere
+   * get your SRV connection string
+2. Clone repo
+3. Install dependiencies on both client and server
 ```bash
 cd server
 npm install
@@ -39,19 +42,19 @@ npm install
 cd client
 npm install
 ```
-3. Create MongoDB atlas cluster 
-4. Create a .env file in the client for you backend api base
+4. Create MongoDB atlas cluster 
+5. Create a .env file in the client for you backend api base
 ```bash
 VITE_API_BASE=http://localhost:4000
 ```
-5. Create a .env file in the client and add these env variables
+6. Create a .env file in the client and add these env variables
 ```bash
 MONGODB_URI=your_atlas_srv_uri
 JWT_SECRET=some_long_random_value
 NPS_API_KEY=your_nps_api_key
 CORS_ORIGIN=http://localhost:5173
 ```
-6. Run the starting scripts
+7. Run the starting scripts
 ```bash
 cd server
 npm run dev
@@ -60,6 +63,6 @@ npm run dev
 cd client
 npm run dev
 ```
-7. Open the web app in your browser (http://localhost:5173)
+8. Open the web app in your browser (http://localhost:5173)
 
 
