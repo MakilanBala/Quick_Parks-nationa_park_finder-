@@ -21,3 +21,4 @@ This project is an application that allows users to find national parks of their
 * External API: NPS Developer API 
 * Infrastructure: Vercel (client) + Render (server)
   
+## Deploying Instructions
