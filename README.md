@@ -26,14 +26,14 @@ This project is an application that allows users to find national parks of their
 ### Prerequisites
 * Node.js
 * NPS(National Park Services) API key
-* Mongo Altas account
+* MongoDB Altas account
 
 ### Installing
 1. Create a free MongoDB cluster
    * allow network access from anywhere
    * get your SRV connection string
 2. Clone repo
-3. Install dependiencies on both client and server
+3. Install dependencies on both client and server
 ```bash
 cd server
 npm install
@@ -46,7 +46,7 @@ npm install
 ```bash
 VITE_API_BASE=http://localhost:4000
 ```
-5. Create a .env file in the client and add these env variables
+5. Create a .env file in the server and add these env variables
 ```bash
 MONGODB_URI=your_atlas_srv_uri
 JWT_SECRET=some_long_random_value
