@@ -22,3 +22,8 @@ This project is an application that allows users to find national parks of their
 * Infrastructure: Vercel (client) + Render (server)
   
 ## Deploying Instructions
+
+### Prerequisites
+* Node.js
+* NPS(National Park Services) API key
+* 
