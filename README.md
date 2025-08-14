@@ -7,7 +7,7 @@ https://quick-parks-national-park-finder.vercel.app/
 
 ## About this Project
 
-This project is an application that allows users to find national parks of their choice by inputing preferred activies, topics, and distance radius. A neat list of parks is then rendered when the user clicks on the search button.
+This project is an application that allows users to find national parks of their choice by inputing preferred activies, topics, and distance radius. A neat list of parks is then rendered when the user clicks on the search button. This project was a passion project of mine. As I explored different national parks, I became more interested in hiking and nature and wanted to develop a tool that could help me find the best places to hike.
 
 ### Features
 * Login/Sign-up/Persisted Session
