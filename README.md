@@ -31,9 +31,7 @@ This project is an application that allows users to find national parks of their
 ### Installing
 1. Clone repo
 2. Install dependiencies on both client and server
-   ```bash
-# install deps
-npm ci
+   Run `npm run build` and then `npm start`.
 
 # dev server
 npm run dev
