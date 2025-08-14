@@ -34,4 +34,32 @@ This project is an application that allows users to find national parks of their
 ```bash
 cd server
 npm install
+```
+```bash
+cd client
+npm install
+```
+3.
+4. Create a .env file in the client for you backend api base
+```bash
+VITE_API_BASE=http://localhost:4000
+```
+5. Create a .env file in the client and add these env variables
+```bash
+MONGODB_URI=your_atlas_srv_uri
+JWT_SECRET=some_long_random_value
+NPS_API_KEY=your_nps_api_key
+CORS_ORIGIN=http://localhost:5173
+```
+6. Run the starting scripts
+```bash
+cd server
+npm run dev
+```
+```bash
+cd client
+npm run dev
+```
+7. Open the web app in your browser (http://localhost:5173)
+
 
