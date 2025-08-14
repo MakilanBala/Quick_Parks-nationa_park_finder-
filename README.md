@@ -26,7 +26,7 @@ This project is an application that allows users to find national parks of their
 ### Prerequisites
 * Node.js
 * NPS(National Park Services) API key
-* Mongo Altas cluster
+* Mongo Altas account
 
 ### Installing
 1. Clone repo
